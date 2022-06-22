@@ -1,0 +1,95 @@
+
+<!-- for live version go to: https://hs-selfiequeen.freedomains.dev/webcam -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selfie Queen</title>
+
+    <style>
+        .canvas{
+            padding-left: 5%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class = "camera">
+        <center><video id = "video" width = '640px' height='480px'></video><canvas class = "canvas" width ="640px" height="480px"></canvas></center>
+        <hr>
+        <div><button id="snap">Take photo</button></div>
+
+    </div>
+
+    <div class="output">
+      <h1>Saved Photos</h1>
+
+    </div>
+
+    <script>
+        
+        const video = document.getElementById('video');
+        const canvas = document.querySelector('.canvas');
+        const snapbutton = document.getElementById('snap')
+        const output = document.querySelector(".output")
+
+        //load existing pictures on page load
+        fetch('/api/photos')
+        .then(r => r.json())
+        .then(data => 
+            data.files.forEach((e) => {
+                output.innerHTML = output.innerHTML + `<div><a href='/image/${e}' target="_blank">https://hs-selfiequeen.freedomains.dev/image/${e}</a></div>`
+            })
+        )
+
+
+        const constraints = {audio: false, video: {width: 1280, height: 720}};
+
+        navigator.mediaDevices.getUserMedia(constraints)
+        .then(function(mediaStream) {
+            video.srcObject = mediaStream;
+            video.onloadedmetadata = function(e) {
+                video.play();
+            }
+        })
+        .catch(function(err){
+            console.log(err.name + ": " + err.message)
+        })
+
+
+
+        snapbutton.addEventListener('click', (e) => {
+            const context = canvas.getContext('2d')
+            
+            context.drawImage(video, 0,0, canvas.width, canvas.height - 5)
+
+            const data = canvas.toDataURL('image/jpeg').split(',')[1]
+
+
+            fetch('/api/photos', {
+                method: "POST",
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: data
+                })
+            }).then(r => r.json())
+            .then(data => {
+                output.innerHTML = `<h1>Saved Photos</h1>`
+                
+                data.files.forEach((e) => {
+                    output.innerHTML = output.innerHTML + `<div><a href='/image/${e}' target="_blank">https://hs-selfiequeen.freedomains.dev/image/${e}</a></div>`
+                    
+                })
+            }
+            )
+        })
+
+
+    </script>
+</body>
+</html>
