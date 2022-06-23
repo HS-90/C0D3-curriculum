@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocketIo Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            font-family: "Lucida Console", "Courier New", monospace;
+        }
+
+        .container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .messagebox {
+            width: 84%;
+            height: 90%;
+            min-height: 600px;
+            border: 1px black solid;
+            margin: auto;
+            overflow: auto;
+            display: inline-block;
+            border-radius: 9px;
+        }
+
+        .enter-message {
+            display: flex;
+            margin: auto;
+            margin-left: 15.6%;
+        }
+
+        .onlinebox {
+            width: 15%;
+            height: 90%;
+            min-height: 600px;
+            border: 1px black solid;
+            margin: auto;
+            overflow: auto;
+            display: inline-block;
+            border-radius: 9px;
+        }
+
+        .userview {
+            margin: auto;
+            width: 94.7%;
+            height: 70%;
+
+        }
+
+        .enterInfo {
+            font-size: 27px;
+            position: absolute;
+            left: 38%;
+            top: 45%;
+        }
+
+        .submituser {
+            font-size: 24px;
+        }
+
+        .username {
+            height: 25px;
+        }
+
+        .send {
+            top: 0px;
+            font-size: 27px;
+            vertical-align: middle;
+            height: 52px;
+            border: 1px black solid;
+            border-radius: 9px;
+            display: inline-block;
+            text-align: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='container'>
+
+        <label class='enterInfo'>
+            <b>Enter Username:</b>
+            <input class='username'></input>
+            <button class='submituser'>Submit</button>
+        </label>
+    </div>
+
+    <script>
+
+        const socket = io()
+
+        const container = document.querySelector('.container')
+        const username = document.querySelector('.username')
+        const submitUser = document.querySelector('.submituser')
+        let curUser
+
+        const enterUser = () => {
+            socket.emit('username', { username: username.value, socketid: socket.id })
+            username.value = ""
+
+        }
+
+        submitUser.onclick = () => {
+            if (username.value != '') enterUser()
+        }
+
+        username.onkeyup = (e) => {
+            if (e.key === 'Enter' && username.value != '') {
+                enterUser()
+            }
+        }
+
+
+        socket.on('userdata', (data) => {
+            if (data.username) {
+                curUser = data.username
+                container.innerHTML = `
+                <div class = 'userview'>
+                    <div class = 'onlinebox' style = "color: white; background-color: grey;">
+                        <div style = "color: white; background-color: black; width: 100%; padding-bottom: 2%; padding-top: 2%; font-size: 22px; text-align: center; ">Currently Online:</div>
+                        </br>
+                        <div class = 'online'></div>
+                    </div>
+                    <div class = 'messagebox' style = "color: white; background-color: black;"></div>
+                    <center>
+                        <div class = 'enter-message'>
+                            <textarea class = 'textbox' style = 'width: 95.1%; height: 45.4px; border-radius: 9px; display: inline-block'></textarea>
+                            <button class = 'send'>Send</button>
+                        </div>
+                    </center>
+                </div>
+         
+                `
+                const send = document.querySelector(".send")
+                const textbox = document.querySelector(".textbox")
+                const online = document.querySelector(".online")
+                const messageBox = document.querySelector(".messagebox")
+
+                const renderUsers = (data) => {
+                    online.innerHTML = ''
+                    Object.values(data.usernames).forEach(e => {
+                        online.innerHTML = online.innerHTML + `<div style = "font-size: 22px"><b style = "color: #66ff33">• </b>${e}</div>`
+                    })
+                }
+
+                const renderMessages = (messages, colors) => {
+                    messageBox.innerHTML = ''
+                    messages.forEach(e => {
+                        messageBox.innerHTML = messageBox.innerHTML + `<p style = "font-size: 17px"><b style = "font-size: 25px; width: 100%; color: ${colors[e.user]};">${e.user}: </b>${e.message}
+                            <span style = "float: right; padding-right: 0.5%; font-size: 13px; color: #e0e0eb; font-style: italic;">${e.time}</span></p>`
+                    })
+
+                    messageBox.scrollTop = messageBox.scrollHeight
+                }
+                renderMessages(data.messages, data.colors)
+
+                socket.on('messageReturn', (data) => {
+                    renderMessages(data.messages, data.colors)
+                })
+
+                const sendMessage = () => {
+                    const userdata = { id: socket.id, name: curUser, message: textbox.value }
+
+                    socket.emit('message', userdata)
+
+                    textbox.value = ""
+                }
+
+                send.onclick = () => {
+                    sendMessage()
+
+                }
+
+                textbox.onkeyup = (e) => {
+                    if (e.key === "Enter") {
+                        sendMessage()
+                    }
+                }
+
+                socket.on('curUsers', (data) => {
+                    online.innerHTML = ''
+                    renderUsers(data)
+                })
+
+
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>
