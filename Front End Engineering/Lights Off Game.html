@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv="Content-Type" content="text/html">
+    <meta name="viewport" content = "width=device-width, initial-scale: 1.0">
+    <title>lights off</title>
+    <style>
+
+        .square{
+            height: 50px;
+            width: 50px;
+            border: 1px solid black;
+            background-color: grey;
+            padding-bottom: 1.5px;
+            
+            display: inline-block;
+            box-sizing: border-box;
+        }
+    
+        .square.green{
+            background-color: greenyellow;
+        }
+    
+    </style>
+
+</head>
+<body>
+    <div class = "board"></div>
+
+    <script>
+
+        //variable for board
+        const board = document.querySelector('.board')
+    
+        let game_started = false
+    
+        
+        //toggle lights on and off
+        const Toggle = (id) => {
+            const light = document.getElementById(""+id)
+    
+            if(light.classList.contains("green")){
+                light.classList.remove("green")
+            }else{
+                light.classList.add("green")
+            }
+    
+        }
+    
+        //generate the board
+        const createBoard = (squares,i=0) => {
+            if(i === squares*squares){
+    
+                board.style.width = `${(squares)*50}px`
+    
+                const random_square = Math.floor(Math.random() * (squares*squares - 1 + 1) + 1)
+    
+                document.getElementById("" + random_square).classList.add("green")
+    
+                game_started = true
+    
+                return
+            }
+    
+            const new_square = document.createElement("div")
+            new_square.classList.add("square")
+    
+            new_square.id = "" + (i+1)
+            
+            //turn surrounding lights on/off on click and checks if gameOver
+            new_square.onclick = () => {
+                const id = i+1
+
+                const top = id - squares
+                const bottom = id + squares
+                const right = id + 1
+                const left = id - 1
+    
+                //check if lights were on
+                const id_on = new_square.classList.contains("green")
+              
+                if(new_square.classList.contains("green")){
+                      
+                    //toggle lights square above
+                    if(!(id <= squares)){
+                        
+                        Toggle(top)
+                    }
+                    
+                    //toggle lights square below
+                    
+                    if(id < (squares*squares-squares+1)){
+                        
+                        Toggle(bottom)
+                    }
+    
+                    //toggle lights left
+                    if(id % squares != 1){
+                        
+                        Toggle(left)
+                    }
+                    
+                    //toggle lights right
+                    if(id % squares != 0){
+                       
+                        Toggle(right)
+                    }
+    
+                    new_square.classList.remove("green")
+                }
+    
+                //check if game is over
+                if(gameOver(squares*squares) && game_started == true){
+    
+                    game_started = false
+            
+                    let new_game = prompt("Play Again? Enter size of board(number of squares per row), enter 0 to quit")
+    
+                    new_game = parseInt(new_game)
+    
+                    if(new_game > 0){
+                        
+                        deleteBoard()
+                        createBoard(new_game, i=0)
+                    }
+                }
+            }
+    
+            board.append(new_square)
+    
+            return createBoard(squares, i+1)
+    
+        }
+        
+        //function to clear board
+        const deleteBoard = () => {
+            board.innerHTML = ``
+        }
+    
+    
+        //function to check if Game Over
+        const gameOver = (boardsize, i = 1) => {
+            if(i === boardsize + 1){
+                return true
+            }
+    
+            if(document.getElementById(""+i).classList.contains("green")){
+                return false
+            }
+            
+            return gameOver(boardsize, i + 1)
+    
+        }
+    
+        //initial board
+        createBoard(2)
+    
+    </script>
+</body>
+</html>
+
+
+
+
+
+
