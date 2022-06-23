@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Classes with Stars</title>
+    
+	<link href="https://fonts.cdnfonts.com/css/saiyan-sans" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/shakifa" rel="stylesheet">
+    <link rel = "stylesheet" href = "https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+
+    <style>
+        body{
+            font-family: 'Shakifa', sans-serif;
+            font-size: 25px;
+            background-color: white;
+        }
+        header{
+            font-family: 'Saiyan Sans', sans-serif;
+            color: red;
+            font-size: 48px;
+            background-color: gold;
+            border-bottom: 2px solid black;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: black; 
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            position: fixed; 
+            padding-left: 15%;
+            max-height: 55px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            
+        }
+        input{
+            height: 30px;
+            border: 3px solid black;
+        }
+        
+        .button{
+            display: inline-block;
+            border: 2px solid black;
+            padding: 7px;
+            font-size: 20px;
+            font-family: 'Saiyan Sans', sans-serif;
+            background-color: gold;
+            color: black;
+            cursor: pointer;
+            border-radius: 20%;
+        }
+        .main{
+            position: absolute;
+            left: 0px;
+            top: 70px;
+            padding-left: 15%;
+            z-index: -1;
+        }
+        .section{
+            font-family: 'Shakifa', sans-serif;
+            color: red;
+            background-color: gold;
+            -webkit-text-stroke-width:1px;
+            -webkit-text-stroke-color:black;
+            font-size: 25px;
+            margin: 1%;
+            border: 3px solid black;
+            display: flex;
+            width: 100%;
+            border-radius:5em;
+            padding: 2%;
+            cursor: pointer;
+            flex-direction: column;
+        }
+
+        .fas{
+            font-size:27px;
+            color: white;
+            -webkit-text-stroke-width: 2.5px;
+            -webkit-text-stroke-color: black;
+            margin-right: 1px;
+            padding-bottom: 5px;
+            
+        }
+    
+        .fas.filled{
+            font-size:27px;
+            color: red;
+            -webkit-text-stroke-width: 2.5px;
+            -webkit-text-stroke-color: black;
+        }
+    
+        .bigContainer{
+            display: inline-block;
+            width: 700px;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="root"></div>
+    <script src="/main.js"></script>
+</body>
+</html>
