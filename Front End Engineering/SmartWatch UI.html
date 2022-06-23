@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv="Content-Type" content="text/html">
+    <meta name="viewport" content = "width=device-width, initial-scale: 1.0">
+    <title>Smartwatch</title>
+    <style>
+        .watch_img{
+            position: fixed;
+            bottom:0;
+            left: 0;
+            width: 600px;
+            height: 800px;
+            background-image: url(https://www.c0d3.com/challenges/assets/watch.jpg);
+        }
+    
+        .container{
+            position: absolute;
+            background-color: white;
+            bottom:215px;
+            left: 135px;
+            height: 376px;
+            width: 371px;
+            border-radius: 200px;
+            overflow: hidden;
+            
+        }
+    
+    
+    
+        .time{
+            text-align: center;
+            font-size: 75px;
+            margin-bottom: 15px;
+        }
+    
+        .weekday{
+            text-align: center;
+            font-size: 27px;
+            
+        }
+    
+        .date{
+            text-align: center;
+            font-size: 27px;
+        }
+    
+        .map{
+            position: relative;
+            bottom: 129px;
+        }
+    
+        .date_time{
+            position: absolute;
+            width: 100%;
+            height: 503px;
+            bottom: -97px;
+            transform: translateY(46%);
+            transition: .4s ease-in-out;
+            text-align: center;
+            margin: auto;
+            background-color: white;
+            right: 0.05px;
+        }
+    
+        .date_time.clicked{
+            position: absolute;
+            transform: translateY(6%);
+        }
+    
+    </style>
+
+</head>
+<body>
+    <div class = "watch_img">
+
+    
+        <div class = "container">
+            <iframe class = "map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d742.7566331730615!2d-87.65536127069579!3d41.8707755987014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880e2ce3d8dd2045%3A0xfe6367eeb99efb34!2sSheridan%20(Philip%20Henry)%20Park!5e0!3m2!1sen!2sus!4v1643151021121!5m2!1sen!2sus"  width="400" height="500" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class = "date_time">
+                <h1 class = "time"></h1> 
+                <hr>
+                <h3 class = "weekday"></h3>
+                <h3 class = "date"></h3>
+            </div>
+        
+        </div>
+    </div>
+
+    <script>
+
+        const showTime = document.querySelector(".time")
+        const showWeekday = document.querySelector(".weekday")
+        const showDate = document.querySelector(".date")
+    
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        //get the date and time
+        const get_date_time = () => {
+            const today = new Date()
+    
+    
+            let hours = today.getHours() % 12
+            
+            if(hours === 0){
+                hours = 12
+            }
+    
+            let minutes = today.getMinutes()
+    
+            if((""+minutes).length < 2){
+                minutes = '0' + minutes
+            }
+    
+            const time = hours + ":" + minutes 
+            const weekday = weekdays[today.getDay()] 
+            const date = months[today.getMonth()] + " " + today.getDate() + ", " + today.getFullYear()
+    
+       
+            return {time: time, weekday: weekday, date: date}
+        };
+    
+        //display the date and time
+        const curr_time = get_date_time()
+
+        showTime.innerText = curr_time['time']
+        showWeekday.innerText = curr_time['weekday']
+        showDate.innerText = curr_time['date']
+    
+        const date_time = document.querySelector(".date_time")
+    
+    
+        date_time.addEventListener("click", () => {
+            if(!date_time.classList.contains("clicked")){
+                date_time.classList.add("clicked")     
+            }else{
+                date_time.classList.remove("clicked")
+            }
+        })
+    
+    
+    
+    </script>
+</body>
+
+
+
+
+
+
+
