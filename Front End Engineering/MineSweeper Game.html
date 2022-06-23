@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv="Content-Type" content="text/html">
+    <meta name="viewport" content = "width=device-width, initial-scale: 1.0">
+    <title>MineSweeper</title>
+    <style>
+        .box{
+            width: 50px;
+            height: 50px;
+            box-sizing: border-box;
+            border: 1px solid black;
+            display: inline-block;
+            vertical-align: top;
+            background-color: rgb(224, 224, 235);
+            padding-top: 16px;
+            padding-left: 20px;
+            color: rgb(224, 224, 235);
+            font-size: 0px;
+        }
+
+        .box.show{
+            background-color: grey;
+            color: black;
+            font-size: 15px;
+        }
+
+        .box.red{
+            background-color: red;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container"></div>
+    
+    <script>
+        
+        const container = document.querySelector(".container")
+        
+        //square object
+        function Square(value, index, isBomb = false){
+            const new_square = document.createElement("div")
+            new_square.classList.add("box")
+
+            //value
+            this.value = value
+
+            //index
+            this.index = index
+
+            //is this bomb
+            this.bomb = isBomb
+
+            new_square.onclick = () => {           
+                checkSquare(this)
+                checkWinGame(100)
+            }
+
+            //disable right click menu when clicking on square and make box red to mark as potential bomb
+            new_square.addEventListener("contextmenu", (e) => {
+                e.preventDefault()
+
+                if(!new_square.classList.contains('show')){
+                    new_square.classList.add("red")
+                }
+
+            })
+
+            this.box = new_square
+
+        }
+
+        //function to generate 10 qnique random numbers between 1 and 100
+        const generateRandoms = (size, max, min, set = new Set()) => {
+            if(set.size === size){
+                return [...set]
+            }
+
+            set.add(Math.floor(Math.random()*max)+ min)
+
+            return generateRandoms(size, max, min, set)
+        }
+
+        //array to store the html square elements
+        const squaresArray = []
+
+        //function to check square value if clicked on
+        const checkSquare = (square) => {
+            
+            const box = square.box
+
+            //if clicked square is bomb
+            if(square.bomb){
+
+                const endGame = confirm("You lost! Would you like to play again?")
+
+                if(endGame){
+                    document.querySelector(".container").innerHTML = ""
+                    squaresArray.length = 0
+                    generateSquares(10, generateRandoms(10,100,1))
+                }    
+            }
+      
+            
+            if(box.classList.contains("show")) return
+
+            //remove the red if previously marked
+            if(box.classList.contains("red")){
+                box.classList.remove("red")
+            }
+
+            box.classList.add("show")
+
+            if(square.bomb){
+                box.innerText = "B"
+            }else{
+                box.innerText = square.value
+            }
+
+            
+            const square_id = square.index
+    
+            //if no bomb in cell or any neighboring cells recursively check nearby squares
+            if(square.value === "" && (!square.bomb)){
+
+                const total_squares = squaresArray.length
+                const row = total_squares ** (1/2)
+
+                const left = square_id - 1
+                const right = square_id + 1
+                const top = square_id - row
+                const bottom = square_id + row
+                const top_left = top - 1
+                const top_right = top + 1
+                const bottom_left = bottom - 1
+                const bottom_right = bottom + 1
+
+
+                //check right square
+                if(right % row != 1){
+                    checkSquare(squaresArray[right-1])
+                }
+                
+                //check left square
+                if(left % row != 0){
+                    checkSquare(squaresArray[left-1])
+                }
+
+                //check top square
+                if(top > 0){
+                    checkSquare(squaresArray[top-1])
+                }
+
+                //check top left
+                if(top_left > 0 && top_left % row != 0){
+                    checkSquare(squaresArray[top_left-1])
+                }
+
+                //check top right
+                if(top_right > 0 && top_right % row != 1){
+                    checkSquare(squaresArray[top_right-1])
+                }
+
+                //check bottom 
+                if(bottom <= total_squares){
+                    checkSquare(squaresArray[bottom-1])
+                }
+
+                //check bottom left
+                if(bottom_left <= total_squares && bottom_left % row != 0){
+                    checkSquare(squaresArray[bottom_left-1])
+                }
+
+                //check bottom right
+                if(bottom_right <= total_squares && bottom_right % row != 1){
+                    checkSquare(squaresArray[bottom_right-1])
+                }
+                        
+            }else{
+                return
+            }
+
+        }
+        //function to check if the game is won
+        const checkWinGame = (boardsize, i=0) => {
+            if(i === boardsize){
+                const youWon = confirm("You Won! Would you like to play again?")
+
+                if(youWon){
+                    document.querySelector(".container").innerHTML = ""
+                    squaresArray.length = 0
+                    generateSquares(10, generateRandoms(10,100,1))
+                }
+            }
+
+            const cur_square = squaresArray[i].box
+
+            if(!cur_square.classList.contains("show") && !squaresArray[i].bomb ){
+                return
+            }
+
+            checkWinGame(boardsize, i+1)
+        }
+
+        //function to print the board from array once squares are done generating
+        const printBoard = (element, array, i = 0) => {
+            if(i === array.length){
+                return
+            }
+            element.append(array[i].box)
+
+            return printBoard(element, array, i+1)
+        }
+
+        //function to populate array with squares
+        const generateSquares = (num,randoms,i=1) => {
+            if(i === num*num + 1){
+                container.style.width = `${50*num}px`
+                printBoard(container, squaresArray)
+                return
+            }
+            
+            if(randoms.includes(i)){
+                squaresArray.push(new Square("", i, true))
+
+                return generateSquares(num, randoms, i+1)
+            }
+
+            let value = 0
+
+            //check surrounding squares for "bombs"
+            const left = i - 1
+            const right = i + 1
+            const top = i - num
+            const bottom = i + num
+            const top_left = top - 1
+            const top_right = top + 1
+            const bottom_left = bottom - 1
+            const bottom_right = bottom + 1
+
+
+            if(left % num != 0 && randoms.includes(left)){
+                value++
+            }
+
+            if(right % num != 1 && randoms.includes(right)){
+                value++
+            }
+
+            if(top > 0 && randoms.includes(top)){
+                value++                
+            }
+                        
+            if(top_left % num != 0 && top_left > 0 && randoms.includes(top_left)){
+                value++
+            }
+           
+            if(top_right % num != 1 && top_right > 0 && randoms.includes(top_right)){
+                value++
+            }
+
+            if(bottom <= num*num && randoms.includes(bottom)){
+                value++            
+            }
+            
+            if(bottom_left % num != 0 && bottom_left <= num*num && randoms.includes(bottom_left)){
+                value++
+            }
+
+            if(bottom_right % num != 1 && bottom_right <= num*num && randoms.includes(bottom_right)){
+                value++
+            }
+
+            if(value === 0){
+                squaresArray.push(new Square("", i, false))
+            }else{
+                squaresArray.push(new Square(value, i, false))
+            }
+
+            return generateSquares(num, randoms, i + 1)
+        }
+
+        //generate board when page loads
+        generateSquares(10, generateRandoms(10,100,1))
+
+
+
+    </script>
+</body>
+</html>
