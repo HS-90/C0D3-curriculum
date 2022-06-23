@@ -26,9 +26,7 @@
             overflow: hidden;
             
         }
-    
-    
-    
+        
         .time{
             text-align: center;
             font-size: 75px;
@@ -74,7 +72,6 @@
 </head>
 <body>
     <div class = "watch_img">
-
     
         <div class = "container">
             <iframe class = "map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d742.7566331730615!2d-87.65536127069579!3d41.8707755987014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880e2ce3d8dd2045%3A0xfe6367eeb99efb34!2sSheridan%20(Philip%20Henry)%20Park!5e0!3m2!1sen!2sus!4v1643151021121!5m2!1sen!2sus"  width="400" height="500" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
@@ -96,10 +93,10 @@
     
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        
         //get the date and time
         const get_date_time = () => {
             const today = new Date()
-    
     
             let hours = today.getHours() % 12
             
@@ -129,8 +126,7 @@
         showDate.innerText = curr_time['date']
     
         const date_time = document.querySelector(".date_time")
-    
-    
+       
         date_time.addEventListener("click", () => {
             if(!date_time.classList.contains("clicked")){
                 date_time.classList.add("clicked")     
@@ -138,9 +134,7 @@
                 date_time.classList.remove("clicked")
             }
         })
-    
-    
-    
+     
     </script>
 </body>
 
