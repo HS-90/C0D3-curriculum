@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv="Content-Type" content="text/html">
+    <meta name="viewport" content = "width=device-width, initial-scale: 1.0">
+    <title>Stars UI</title>
+
+    <!-- stylesheet -->
+    <link rel = "stylesheet" href = "https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+
+    <style>
+
+        .fas{
+            font-size:30px;
+            color: white;
+            -webkit-text-stroke-width: 2.5px;
+            -webkit-text-stroke-color: black;
+            margin-right: 1px;
+            
+        }
+    
+        .fas.filled{
+            font-size:30px;
+            color: yellow;
+            -webkit-text-stroke-width: 2.5px;
+            -webkit-text-stroke-color: black;
+        }
+    
+        .bigContainer{
+            display: inline-block;
+            width: 700px;
+            padding-bottom: 5px;
+        }
+    
+    
+    </style>
+
+</head>
+<body>
+    <!-- body -->
+    <div class = bigContainer>
+        <div class = "starsContainer">
+        </div>
+    </div>
+    <div class="message">You are giving 0 Stars!</div>
+
+    <script>
+
+        //select message div to toggle what text will display
+        const message = document.querySelector(".message")
+
+        //toggle to see if user clicked on star
+        let clicked = false
+
+        //create star object
+        function Star(star_id){
+
+            const new_star = document.createElement("i")
+
+            new_star.classList.add("fas")
+            new_star.classList.add("fa-star")
+            new_star.classList.add("hoverstar")
+
+            this.order = star_id
+
+            new_star.addEventListener("mouseover", (e) =>{
+                if(clicked === false){
+     
+                    fillStars(parseInt(this.order))
+                    unfillStars(parseInt(this.order))
+                    message.innerText = `You are giving ${this.order} Stars!`
+                }
+            })
+
+            new_star.addEventListener("click", (e) => {
+
+                message.innerText = `You have given ${this.order} Stars!`
+                fillStars(parseInt(this.order))
+                unfillStars(parseInt(this.order))
+    
+                clicked = true
+            })
+
+            this.star = new_star
+
+        }
+
+        const starArr = []
+
+        //function to generate stars in container
+        const generateStars = (numstars,container,i=1) => {
+            if(i === numstars + 1){
+
+                return
+            }
+
+            const cur_star = new Star(i)
+
+            starArr.push(cur_star)
+            container.append(starArr[i-1].star)
+
+            return generateStars(numstars, container, i+1)
+        }
+
+        //generate the 5 stars into the container div
+        generateStars(5, document.querySelector(".starsContainer"))
+
+    
+        //recursive function to fill selected stars
+        const fillStars = (num, i = 1) => {
+            if(i == num + 1){
+                return
+            }
+   
+            starArr[i-1].star.classList.add("filled")
+            
+            return fillStars(num, i+1)
+    
+        }
+        //recursive function to unfill stars if you toggle to reduce stars
+        const unfillStars = (num, i = 5) => {
+            if(i == num){
+                return
+            }
+    
+            const cur_star = starArr[i-1]
+    
+            if(cur_star.star.classList.contains("filled")){
+                cur_star.star.classList.remove("filled")
+            }
+    
+            return unfillStars(num, i-1)
+    
+        }
+        
+        //eventlistener when cursor leaves container
+        const bigContainer = document.querySelector(".bigContainer")
+    
+        bigContainer.onmouseenter = () => {
+            clicked = false
+        }
+    
+    
+    </script>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
